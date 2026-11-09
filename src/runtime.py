@@ -31,10 +31,10 @@ from pathlib import Path
 
 APP_NAME = "yun-genshin-linux"
 
-# 客户端 exe 相对 prefix 的位置
-CLIENT_REL = Path(
-    "drive_c/users/ax210/AppData/Local/Programs/miHoYo/GenshinImpactCloudGame"
-)
+# 客户端 exe 相对 prefix 的位置。
+# 用户名部分是 Wine 的默认（通常与 Linux 用户名同名），但不能写死 ——
+# 所以运行时动态解析（见 Layout.client_dir）。
+CLIENT_REL_TAIL = Path("AppData/Local/Programs/miHoYo/GenshinImpactCloudGame")
 CLIENT_EXE = "Genshin Impact Cloud Game.exe"
 
 # 需要部署的补丁文件：(相对 Wine 安装目录的路径, 目标 basename)
@@ -121,8 +121,33 @@ class Layout:
         return self.prefix / "drive_c" / "windows" / "system32"
 
     @property
+    def users_dir(self) -> Path:
+        return self.prefix / "drive_c" / "users"
+
+    def _find_user_dir(self) -> Path | None:
+        """在 prefix 里找装了客户端的 Windows 用户目录。
+
+        Wine 的用户目录名默认与 Linux 用户名同名，但可以改 ——
+        所以扫一遍而不是写死。
+        """
+        users = self.users_dir
+        if not users.is_dir():
+            return None
+        for u in sorted(users.iterdir()):
+            if not u.is_dir():
+                continue
+            if (u / CLIENT_REL_TAIL / CLIENT_EXE).exists():
+                return u
+        return None
+
+    @property
     def client_dir(self) -> Path:
-        return self.prefix / CLIENT_REL
+        """客户端安装目录（动态解析用户名）。"""
+        u = self._find_user_dir()
+        if u is not None:
+            return u / CLIENT_REL_TAIL
+        # 还没装：给出 Wine 默认用户目录（通常与 Linux 用户名同名）
+        return self.users_dir / os.environ.get("USER", "ax210") / CLIENT_REL_TAIL
 
     @property
     def client_exe(self) -> Path:

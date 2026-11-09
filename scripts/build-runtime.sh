@@ -20,10 +20,21 @@ KEEP32=0
 log(){ echo "[runtime] $*"; }
 die(){ echo "[runtime] ✗ $*" >&2; exit 1; }
 
+# 删除目录。用 trash(1) 若可用（可恢复），否则 rm -rf。
+# 刻意不用任何特定机器上的路径 —— 本脚本必须能在别人机器上跑。
+remove_dir(){
+    local d=$1
+    [ -e "$d" ] || return 0
+    if command -v trash >/dev/null 2>&1; then
+        trash "$d" 2>/dev/null && return 0
+    fi
+    rm -rf "$d"
+}
+
 [ -d "$SRC_WINE/bin" ] || die "找不到 Wine 运行时：$SRC_WINE/bin（先跑 scripts/build-wine.sh）"
 
 log "清空输出目录 …"
-node /home/ax210/.zcode/local-plugins/safe-rm/bin/trash.mjs "$OUT" 2>/dev/null
+remove_dir "$OUT"
 mkdir -p "$OUT/lib/wine/x86_64-windows" "$OUT/lib/wine/x86_64-unix" "$OUT/bin" "$OUT/share"
 
 log "复制 bin …"
@@ -40,8 +51,8 @@ cp -a "$SRC_WINE/lib/wine/x86_64-unix/." "$OUT/lib/wine/x86_64-unix/"
 
 if [ "$KEEP32" = "0" ]; then
     log "去掉 32 位 Wine（客户端是 PE32+）…"
-    node /home/ax210/.zcode/local-plugins/safe-rm/bin/trash.mjs \
-        "$OUT/lib/wine/i386-windows" "$OUT/lib/wine/i386-unix" 2>/dev/null
+    remove_dir "$OUT/lib/wine/i386-windows"
+    remove_dir "$OUT/lib/wine/i386-unix"
 fi
 
 log "strip 全部二进制 …"

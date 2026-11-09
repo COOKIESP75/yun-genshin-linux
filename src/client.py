@@ -22,7 +22,7 @@ import tempfile
 import urllib.request
 from pathlib import Path
 
-from runtime import Layout, RuntimeManager, log
+from runtime import CLIENT_EXE, Layout, RuntimeManager, log
 
 # 米哈游官方下载接口（与官方客户端内置的一致）
 OFFICIAL_DOWNLOAD_URL = (
@@ -153,7 +153,7 @@ class ClientBootstrap:
         base = self.layout.prefix / "drive_c" / "users"
         if not base.exists():
             return None
-        for p in base.rglob(CLIENT_EXE_NAME):
+        for p in base.rglob(CLIENT_EXE):
             return p
         return None
 
@@ -190,8 +190,6 @@ class ClientBootstrap:
         log("✓ 补丁已适配新客户端")
         return True
 
-
-CLIENT_EXE_NAME = "Genshin Impact Cloud Game.exe"
 
 
 def main(argv: list[str]) -> int:

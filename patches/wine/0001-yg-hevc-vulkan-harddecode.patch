@@ -1101,7 +1101,7 @@ index 1ea8c60..f7ee667 100644
  
      if (hr == E_INVALIDARG)
 diff --git a/dlls/d3d9/video.c b/dlls/d3d9/video.c
-index d3a933e..10aa635 100644
+index d3a933e..045e561 100644
 --- a/dlls/d3d9/video.c
 +++ b/dlls/d3d9/video.c
 @@ -38,6 +38,7 @@
@@ -1212,7 +1212,7 @@ index d3a933e..10aa635 100644
 +            if (FAILED(wined3d_resource_map(wined3d_buffer, 0, &map_desc, NULL, WINED3D_MAP_READ)))
 +                break;
 +            data = map_desc.data;
-+            sprintf(path, "C:\\users\\ax210\\AppData\\Local\\Temp\\yg_%s_%u.bin",
++            sprintf(path, ".\\yg_%s_%u.bin",
 +                    dumps[i].name, decoder->dump_index++);
 +            if ((f = fopen(path, "wb")))
 +            {
@@ -1375,7 +1375,7 @@ index d3a933e..10aa635 100644
 +                data = decoder->buffers[buffer->CompressedBufferType];
 +            }
 +
-+            sprintf(path, "C:\\users\\ax210\\AppData\\Local\\Temp\\yg_slice_%d.bin", dump_index++);
++            sprintf(path, ".\\yg_slice_%d.bin", dump_index++);
 +            if ((f = fopen(path, "wb")))
 +            {
 +                if (data && buffer->DataSize)
@@ -4850,15 +4850,3 @@ index 6fcfe2a..8a19145 100644
      WINED3D_VK_KHR_VIDEO_QUEUE,
  
      WINED3D_VK_EXT_COUNT,
-diff --git a/dlls/winevulkan/make_vulkan b/dlls/winevulkan/make_vulkan
-index 792f1d9..e4e73d4 100755
---- a/dlls/winevulkan/make_vulkan
-+++ b/dlls/winevulkan/make_vulkan
-@@ -101,7 +101,6 @@ UNSUPPORTED_EXTENSIONS = [
-     "VK_KHR_maintenance7", # Causes infinity recursion in struct convert code
-     "VK_KHR_shared_presentable_image", # Needs WSI work.
-     "VK_KHR_video_encode_h265", # StdVideoH265HrdParameters cannot be handled
--    "VK_KHR_video_decode_h265", # by struct conversions.
-     "VK_KHR_video_maintenance2", # Also affected by StdVideoH265HrdParameters.
-     "VK_NV_external_memory_rdma", # Needs shared resources work.
-     "VK_NV_external_compute_queue", # Has a new dispatchable handle
