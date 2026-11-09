@@ -110,3 +110,31 @@ ICD 文件通过 `flatpak-spawn --host` 访问）。
 
 补丁更新时：应用版本 +1，`runtime/sha256.txt` 更新，
 `client.py` 的 `client_fingerprint()` 检测到客户端变化时自动重部补丁。
+
+---
+
+## 上传前检查（已执行）
+
+### 已修复的可移植性问题
+
+| 位置 | 问题 | 修法 |
+|---|---|---|
+| `src/runtime.py` | 客户端路径写死 `drive_c/users/ax210/...` | 扫 `prefix/drive_c/users` 动态解析 |
+| `patches/wine/0001` | `dlls/d3d9/video.c` 的诊断 dump 写死 `C:\users\ax210\...\Temp\` | 改为相对当前目录 `.\yg_*.bin` |
+| `scripts/build-runtime.sh` | 用了本机 safe-rm 插件的绝对路径 | 改为 `trash(1)` 或 `rm -rf` 的通用实现 |
+| `patches/wine/0001` | 含 `make_vulkan` 的改动，与 `0000` 重复导致 patch 冲突 | 从 0001 中排除 |
+
+第一条不只是洁癖：**换个用户名客户端就找不到**，会让应用在别人机器上直接不可用。
+
+### 提交内容
+
+git 仓库只含源码与补丁（~470KB），**不含** 261MB 的运行时
+（`runtime/` 在 `.gitignore` 里，由 `scripts/build-runtime.sh` 生成）。
+
+发布时需要另行上传运行时产物（tarball / AppImage，见上）。
+
+### 当前未上传的部分
+
+- **无 git remote** —— 纯本地仓库
+- 运行时未进版本库（体积原因）
+- 未做签名、校验和、镜像
