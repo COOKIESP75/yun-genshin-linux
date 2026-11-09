@@ -20,6 +20,7 @@
 
 from __future__ import annotations
 
+import getpass
 import hashlib
 import os
 import re
@@ -147,7 +148,8 @@ class Layout:
         if u is not None:
             return u / CLIENT_REL_TAIL
         # 还没装：给出 Wine 默认用户目录（通常与 Linux 用户名同名）
-        return self.users_dir / os.environ.get("USER", "ax210") / CLIENT_REL_TAIL
+        default_user = os.environ.get("USER") or getpass.getuser()
+        return self.users_dir / default_user / CLIENT_REL_TAIL
 
     @property
     def client_exe(self) -> Path:

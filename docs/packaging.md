@@ -119,8 +119,8 @@ ICD 文件通过 `flatpak-spawn --host` 访问）。
 
 | 位置 | 问题 | 修法 |
 |---|---|---|
-| `src/runtime.py` | 客户端路径写死 `drive_c/users/ax210/...` | 扫 `prefix/drive_c/users` 动态解析 |
-| `patches/wine/0001` | `dlls/d3d9/video.c` 的诊断 dump 写死 `C:\users\ax210\...\Temp\` | 改为相对当前目录 `.\yg_*.bin` |
+| `src/runtime.py` | 客户端路径写死了具体 Windows 用户名 | 扫 `prefix/drive_c/users` 动态解析 |
+| `patches/wine/0001` | `dlls/d3d9/video.c` 的诊断 dump 写死了具体 Windows 用户名 | 改为相对当前目录 `.\yg_*.bin` |
 | `scripts/build-runtime.sh` | 用了本机 safe-rm 插件的绝对路径 | 改为 `trash(1)` 或 `rm -rf` 的通用实现 |
 | `patches/wine/0001` | 含 `make_vulkan` 的改动，与 `0000` 重复导致 patch 冲突 | 从 0001 中排除 |
 
