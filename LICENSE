@@ -1,0 +1,35 @@
+MIT License
+
+Copyright (c) 2026 yun-genshin-linux contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+本项目自身的代码（src/、scripts/、docs/、README.md）适用上述 MIT 许可证。
+
+例外说明：
+  - patches/wine/*.patch 是对 Wine 的修改，遵循 Wine 的 LGPL-2.1 许可证。
+  - runtime/ 下的预编译二进制是 Wine 衍生作品，同样适用 LGPL-2.1，
+    完整许可证文本见 runtime/LICENSE.wine。
+  - Wine 及其衍生作品不得使用 "Wine" 作为产品名称的一部分，
+    本项目使用 "yun-genshin-linux" 作为名称。
+
+本项目与米哈游（miHoYo）无任何关联，不包含也不分发云原神客户端本体。
+用户需自行从官方渠道获取客户端。
