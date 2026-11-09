@@ -62,8 +62,8 @@ if [ -d "$ROOT/runtime-patches" ]; then
 fi
 
 log "生成哈希清单 …"
-( cd "$OUT/lib/wine/x86_64-windows" && sha256sum *.dll 2>/dev/null
-  cd ../x86_64-unix && sha256sum *.so 2>/dev/null ) > "$OUT/sha256.txt"
+( cd "$OUT" && sha256sum lib/wine/x86_64-windows/*.dll 2>/dev/null
+  sha256sum lib/wine/x86_64-unix/*.so 2>/dev/null ) > "$OUT/sha256.txt"
 
 log "✓ 运行时体积：$(du -sh "$OUT" | cut -f1)"
 log "  （其中 lib/wine: $(du -sh "$OUT/lib/wine" | cut -f1)）"
