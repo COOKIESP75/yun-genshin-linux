@@ -6,16 +6,19 @@
 #
 # 瘦身策略：
 #   * strip 全部 PE/ELF → 去掉调试符号（-g 构建的产物瘦身 ~2/3）
-#   * 去掉 i386-windows / i386-unix（客户端是 PE32+，纯 64 位运行）
-#     ⚠ 若客户端某个组件是 32 位，需要保留 i386；用 --keep32 开关
+#   * 保留 i386-windows / i386-unix —— 米哈游官方客户端安装包
+#     （yscloud_*.exe）是 PE32/80386 的 NSIS 自解压包，缺了 i386 就装不上：
+#       wine: failed to load L"\\??\\C:\\windows\\syswow64\\ntdll.dll" error c0000135
+#     客户端本体是 PE32+，运行期仍走 64 位；32 位这一份只用于安装器。
+#     用 --no32 开关可再瘦掉 ~220 MB，代价是装不了客户端。
 #   * 补丁 DLL 单独 strip 后覆盖进去
 set -u
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 SRC_WINE=${SRC_WINE:-$ROOT/../wine-patched}
 OUT="$ROOT/runtime"
-KEEP32=0
-[ "${1:-}" = "--keep32" ] && KEEP32=1
+KEEP32=1
+[ "${1:-}" = "--no32" ] && KEEP32=0
 
 log(){ echo "[runtime] $*"; }
 die(){ echo "[runtime] ✗ $*" >&2; exit 1; }
@@ -49,8 +52,13 @@ cp -a "$SRC_WINE/lib/wine/x86_64-windows/." "$OUT/lib/wine/x86_64-windows/"
 log "复制 x86_64-unix …"
 cp -a "$SRC_WINE/lib/wine/x86_64-unix/." "$OUT/lib/wine/x86_64-unix/"
 
-if [ "$KEEP32" = "0" ]; then
-    log "去掉 32 位 Wine（客户端是 PE32+）…"
+if [ "$KEEP32" = "1" ]; then
+    log "复制 i386-windows / i386-unix（官方安装包是 32 位 PE）…"
+    mkdir -p "$OUT/lib/wine/i386-windows" "$OUT/lib/wine/i386-unix"
+    cp -a "$SRC_WINE/lib/wine/i386-windows/." "$OUT/lib/wine/i386-windows/"
+    cp -a "$SRC_WINE/lib/wine/i386-unix/." "$OUT/lib/wine/i386-unix/"
+else
+    log "去掉 32 位 Wine（将无法安装客户端）…"
     remove_dir "$OUT/lib/wine/i386-windows"
     remove_dir "$OUT/lib/wine/i386-unix"
 fi
@@ -74,7 +82,9 @@ fi
 
 log "生成哈希清单 …"
 ( cd "$OUT" && sha256sum lib/wine/x86_64-windows/*.dll 2>/dev/null
-  sha256sum lib/wine/x86_64-unix/*.so 2>/dev/null ) > "$OUT/sha256.txt"
+  sha256sum lib/wine/x86_64-unix/*.so 2>/dev/null
+  sha256sum lib/wine/i386-windows/*.dll 2>/dev/null
+  sha256sum lib/wine/i386-unix/* 2>/dev/null ) > "$OUT/sha256.txt"
 
 log "✓ 运行时体积：$(du -sh "$OUT" | cut -f1)"
 log "  （其中 lib/wine: $(du -sh "$OUT/lib/wine" | cut -f1)）"
