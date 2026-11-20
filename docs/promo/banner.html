@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>云原神 Linux 整合应用 · 横版宣传图</title>
+<style>
+@page{size:1920px 1080px;margin:0}
+:root{
+  --ink:#F3F6FC; --muted:#98A6C6; --line:rgba(255,255,255,.11);
+  --cyan:#3BD8F5; --amber:#FFB547;
+  --sans:"Noto Sans CJK SC","Noto Sans CJK TC",sans-serif;
+  --mono:"DejaVu Sans Mono","Noto Sans Mono",monospace;
+}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{margin:0;padding:0;background:#0C1120}
+body{font-family:var(--sans);color:var(--ink)}
+
+.banner{
+  position:relative;width:1920px;height:1080px;overflow:hidden;
+  background:
+    radial-gradient(900px 620px at 92% -6%, rgba(59,216,245,.17), transparent 62%),
+    radial-gradient(760px 560px at -4% 106%, rgba(255,181,71,.13), transparent 60%),
+    linear-gradient(160deg,#16203A 0%,#101728 52%,#0C1120 100%);
+}
+.banner::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 56px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 56px);
+  -webkit-mask-image:radial-gradient(1500px 900px at 55% 40%, #000 20%, transparent 80%);
+          mask-image:radial-gradient(1500px 900px at 55% 40%, #000 20%, transparent 80%);
+}
+.flat-circle{position:absolute;right:-250px;top:-300px;width:720px;height:720px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, rgba(59,216,245,.15), rgba(59,216,245,.02) 70%);
+  border:1px solid rgba(59,216,245,.16);pointer-events:none;}
+
+.page{position:relative;z-index:2;height:100%;padding:54px 88px 38px;display:flex;flex-direction:column;}
+.main{flex:1;display:flex;gap:56px;min-height:0;}
+.left{flex:0 0 1000px;display:flex;flex-direction:column;}
+.right{flex:1;display:flex;flex-direction:column;}
+
+/* 页眉 */
+.brand{display:flex;align-items:center;gap:15px;}
+.mark{width:50px;height:50px;border-radius:13px;background:var(--cyan);color:#0C1120;font-weight:900;
+  font-size:29px;line-height:1;display:flex;align-items:center;justify-content:center;position:relative;}
+.mark::after{content:"";position:absolute;right:-5px;bottom:-5px;width:15px;height:15px;border-radius:5px;background:var(--amber);}
+.brandname{font-size:23px;font-weight:700;}
+.brandname span{color:var(--muted);font-weight:400;font-size:18px;margin-left:12px;letter-spacing:1.6px;}
+.badge{margin-left:auto;font-family:var(--mono);font-size:17px;color:var(--muted);
+  border:1px solid var(--line);border-radius:999px;padding:8px 18px;}
+.badge b{color:var(--cyan);font-weight:700;}
+
+/* 左栏 */
+.eyebrow{display:flex;align-items:center;gap:12px;font-size:19px;font-weight:500;color:var(--cyan);
+  letter-spacing:2.2px;margin:38px 0 18px;}
+.eyebrow::before{content:"";width:32px;height:4px;background:var(--cyan);border-radius:2px;}
+.title{margin:0;font-size:92px;line-height:1.08;font-weight:900;letter-spacing:-1px;}
+.title .cyan{color:var(--cyan);}
+.lede{margin:22px 0 0;max-width:960px;font-size:23px;line-height:1.62;color:#C6D2EA;}
+.lede b{color:var(--amber);font-weight:700;font-family:var(--mono);font-size:21px;}
+
+.flow{margin-top:26px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.chip{font-size:19px;color:#CFE0F5;background:rgba(255,255,255,.07);border-radius:9px;padding:8px 14px;white-space:nowrap;}
+.chip.hot{background:var(--cyan);color:#08121E;font-weight:700;}
+.arrow{color:rgba(255,255,255,.34);font-size:18px;}
+.flow-note{margin:14px 2px 0;font-size:16px;color:var(--muted);}
+.flow-note code{font-family:var(--mono);font-size:15px;color:var(--amber);}
+
+.install{margin-top:auto;padding:26px 30px;border-radius:18px;background:rgba(255,255,255,.055);}
+.install .step{font-family:var(--mono);font-size:23px;line-height:1.6;}
+.install .step .prompt{color:var(--cyan);margin-right:12px;}
+.install .hint{color:var(--muted);font-size:17px;font-family:var(--sans);}
+.install .note{margin:10px 0 0;font-size:18px;line-height:1.55;color:var(--muted);}
+
+/* 右栏 */
+.hero-badge{width:186px;height:186px;border-radius:50%;align-self:flex-end;
+  background:radial-gradient(circle at 32% 26%, rgba(59,216,245,.22), rgba(59,216,245,.04) 68%);
+  border:1px solid rgba(59,216,245,.32);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.hb-main{font-size:46px;font-weight:900;color:var(--cyan);letter-spacing:-1px;line-height:1;}
+.hb-sub{margin-top:8px;font-size:16px;letter-spacing:4px;color:#CFE0F5;}
+.hb-dot{width:8px;height:8px;border-radius:50%;background:var(--amber);margin-top:13px;}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;margin-top:26px;
+  border-top:1px solid var(--line);border-left:1px solid var(--line);}
+.stat{padding:18px 22px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);}
+.num{font-size:54px;font-weight:900;line-height:1;letter-spacing:-1.5px;color:var(--cyan);}
+.num.amber{color:var(--amber);}
+.unit{font-size:22px;font-weight:700;margin-left:5px;}
+.lab{margin-top:8px;font-size:17px;color:var(--muted);}
+
+.features{margin-top:26px;flex:1;}
+.feature{display:flex;gap:16px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);}
+.feature:last-child{border-bottom:none;}
+.ficon{flex:0 0 38px;width:38px;height:38px;border-radius:10px;background:rgba(59,216,245,.12);
+  display:flex;align-items:center;justify-content:center;}
+.ficon svg{width:22px;height:22px;stroke:var(--cyan);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.ftext h3{margin:0;font-size:21px;font-weight:700;}
+.ftext p{margin:4px 0 0;font-size:17px;line-height:1.5;color:var(--muted);}
+.ftext p b{color:#D9E4F7;font-weight:500;}
+
+/* 页脚 */
+.footer{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);display:flex;gap:32px;}
+.footer p{margin:0;font-size:14px;line-height:1.7;color:#7E8DAE;}
+.footer .strong{color:#B4C2DE;}
+</style>
+</head>
+<body>
+<div class="banner">
+  <div class="flat-circle"></div>
+  <div class="page">
+
+    <div class="brand">
+      <div class="mark">云</div>
+      <div class="brandname">云原神 · Linux 整合应用<span>YUN-GENSHIN LINUX</span></div>
+      <div class="badge">yun-genshin-linux · <b>v0.1.0</b> · MIT / LGPL-2.1</div>
+    </div>
+
+    <div class="main">
+      <div class="left">
+        <div class="eyebrow">GPU 硬件解码 · H.265 / VULKAN</div>
+        <h1 class="title">云原神<br>在 Linux 上<br><span class="cyan">用 GPU 硬解</span>跑起来</h1>
+        <p class="lede">官方客户端只有 Windows 版。本项目提供定制 Wine 运行时与补丁，让解码在显卡里完成：<b>VK_KHR_video_decode_h265</b> 硬解 H.265，画面一次 CPU 都不经过。</p>
+
+        <div class="flow">
+          <span class="chip">云端编码 H.265</span><span class="arrow">→</span>
+          <span class="chip">RTC · UDP</span><span class="arrow">→</span>
+          <span class="chip">FFmpeg NAL 解析</span><span class="arrow">→</span>
+          <span class="chip hot">Vulkan 解码队列</span><span class="arrow">→</span>
+          <span class="chip">交换链上屏</span>
+        </div>
+        <p class="flow-note">解码 → 纹理 → 上屏，一帧不落回内存。<code>yg-upload = 0</code>　<code>yg-nv12 = 0</code></p>
+
+        <div class="install">
+          <div class="step"><span class="prompt">$</span>./scripts/install.sh</div>
+          <div class="step"><span class="prompt">$</span>yun-genshin</div>
+          <div class="step"><span class="prompt">$</span>yun-genshin --check<span class="hint">　健康检查</span></div>
+          <p class="note">首次启动自动从官方渠道下载客户端 → 隔离 prefix 安装 → 部署补丁 → 启动。</p>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="hero-badge">
+          <div class="hb-main">H.265</div>
+          <div class="hb-sub">GPU 硬解</div>
+          <div class="hb-dot"></div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><div class="num">62.5<span class="unit">fps</span></div><div class="lab">实测中位帧率</div></div>
+          <div class="stat"><div class="num">0<span class="unit">次</span></div><div class="lab">CPU 回读与上传</div></div>
+          <div class="stat"><div class="num amber">261<span class="unit">MB</span></div><div class="lab">定制 Wine 运行时</div></div>
+          <div class="stat"><div class="num amber">+4400<span class="unit">行</span></div><div class="lab">Wine 补丁 · 25 个文件</div></div>
+        </div>
+
+        <div class="features">
+          <div class="feature">
+            <div class="ficon"><svg viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M10 3v3.5M14 3v3.5M10 17.5V21M14 17.5V21M3 10h3.5M3 14h3.5M17.5 10H21M17.5 14H21"/></svg></div>
+            <div class="ftext"><h3>GPU 硬件解码</h3><p><b>VK_KHR_video_decode_h265</b>，NVIDIA / AMD / Intel 通用。</p></div>
+          </div>
+          <div class="feature">
+            <div class="ficon"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg></div>
+            <div class="ftext"><h3>纯 GPU 上屏</h3><p>解码 → 纹理 → Vulkan 交换链，全程不回读内存。</p></div>
+          </div>
+          <div class="feature">
+            <div class="ficon"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/></svg></div>
+            <div class="ftext"><h3>客户端更新自动适配</h3><p>按导出名挂钩 FFmpeg，换版本后自动重部署补丁。</p></div>
+          </div>
+          <div class="feature">
+            <div class="ficon"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v10l-7 4-7-4V7z"/><path d="M12 12l7-5M12 12v9M12 12L5 7"/></svg></div>
+            <div class="ftext"><h3>开箱即用</h3><p>自带已编译的定制 Wine 运行时，用户不用编译。</p></div>
+          </div>
+          <div class="feature">
+            <div class="ficon"><svg viewBox="0 0 24 24"><path d="M5 3l13 6.5-5.6 2.1L10 19z"/><path d="M13 11.5l4.5 8"/></svg></div>
+            <div class="ftext"><h3>线性鼠标手感</h3><p>修正 X11 指针加速，灵敏度不再忽快忽慢。</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p class="strong">本项目与米哈游无任何关联，不包含也不分发云原神客户端本体。</p>
+      <p>项目代码 MIT；Wine 补丁与运行时 LGPL-2.1。致谢：Wine · Khronos Vulkan · 米哈游</p>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
