@@ -1,7 +1,36 @@
 # 云原神 Linux 整合应用（yun-genshin-linux）
 
+[English](#english) | [简体中文](#这是什么)
+
 在 Linux 上原生运行**云原神**（米哈游云游戏 Windows 客户端），通过给 Wine 打补丁，
 让客户端走 **GPU 硬件解码**（Vulkan H.265），而不是 CPU 软解。
+
+---
+
+## English
+
+**yun-genshin-linux** runs **Genshin Impact Cloud** (云原神， miHoYo's official cloud-gaming Windows client) natively on **Linux**. It ships a patched **Wine** runtime so the client renders through **GPU hardware decoding** (Vulkan H.265/HEVC) instead of CPU software decoding.
+
+| Highlights | |
+|---|---|
+| **GPU hardware decoding** | Vulkan `VK_KHR_video_decode_h265`, works on NVIDIA / AMD / Intel, zero CPU readback or upload |
+| **Pure GPU presentation** | decode → texture → Vulkan swapchain, no memory round-trip |
+| **Self-healing updates** | re-deploys patches and re-validates after the client self-updates |
+| **Linear mouse input** | fixes X11 pointer acceleration causing inconsistent sensitivity |
+| **Batteries included** | prebuilt patched Wine runtime (~350 MB), no manual Wine compilation |
+
+> ⚠ **This project does not distribute miHoYo's client and is not affiliated with miHoYo.** First launch guides you through downloading the official installer (`yscloud_*.exe`) from miHoYo's official API and installing it in an isolated Wine prefix.
+
+```bash
+# 1. Install to ~/.local/share/yun-genshin-linux
+./scripts/install.sh
+
+# 2. Launch (first run guides you through the official client download)
+~/.local/bin/yun-genshin
+```
+
+Requires: Linux (X11) with a Vulkan-capable GPU driver (NVIDIA / AMD / Intel).
+Full documentation, Wine patch details, build instructions and FAQ: see the [简体中文 section](#这是什么) below.
 
 ---
 
