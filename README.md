@@ -2,24 +2,33 @@
 
 [English](#english) | [简体中文](#这是什么)
 
-在 Linux 上原生运行**云原神**（米哈游云游戏 Windows 客户端），通过给 Wine 打补丁，
-让客户端走 **GPU 硬件解码**（Vulkan H.265），而不是 CPU 软解。
+通过打过补丁的 Wine 在 Linux 上运行**云原神** Windows 客户端，并尝试使用 Vulkan H.265 GPU 硬件解码；这不是客户端的原生 Linux 重写。
+
+![云原神 Linux 项目展示海报](docs/showcase/github-poster.png)
+
+[交互式模型展示](docs/showcase/model-viewer-standalone.html)（GitHub 不直接运行 HTML；请下载后在浏览器中打开） · [Tux Ubuntu 3D 模型](docs/showcase/tux-ubuntu.glb)
+
+Tux、Ubuntu 和云原神相关素材的权利与本项目代码的 MIT 许可证不同，使用时请分别确认其适用条款。
 
 ---
 
 ## English
 
-**yun-genshin-linux** runs **Genshin Impact Cloud** (云原神， miHoYo's official cloud-gaming Windows client) natively on **Linux**. It ships a patched **Wine** runtime so the client renders through **GPU hardware decoding** (Vulkan H.265/HEVC) instead of CPU software decoding.
+**yun-genshin-linux** runs **Genshin Impact Cloud** (云原神, miHoYo's official Windows cloud-gaming client) on Linux using patched **Wine**; it is not a native Linux rewrite. The patches aim to enable GPU hardware decoding using Vulkan H.265/HEVC where supported.
 
 | Highlights | |
 |---|---|
-| **GPU hardware decoding** | Vulkan `VK_KHR_video_decode_h265`, works on NVIDIA / AMD / Intel, zero CPU readback or upload |
-| **Pure GPU presentation** | decode → texture → Vulkan swapchain, no memory round-trip |
-| **Self-healing updates** | re-deploys patches and re-validates after the client self-updates |
-| **Linear mouse input** | fixes X11 pointer acceleration causing inconsistent sensitivity |
-| **Batteries included** | prebuilt patched Wine runtime (~350 MB), no manual Wine compilation |
+| **GPU hardware decoding** | Targets Vulkan `VK_KHR_video_decode_h265`; support depends on the GPU, driver and video capabilities |
+| **GPU presentation path** | Aims for decode → texture → Vulkan swapchain without CPU readback or upload when the supported path is active |
+| **Update handling** | Re-deploys patches and re-validates after client updates; compatibility with future updates is not guaranteed |
+| **Linear mouse input** | Addresses X11 pointer acceleration causing inconsistent sensitivity |
+| **Runtime** | A complete patched Wine runtime must be obtained or assembled separately; it is not included in this public repository |
 
 > ⚠ **This project does not distribute miHoYo's client and is not affiliated with miHoYo.** First launch guides you through downloading the official installer (`yscloud_*.exe`) from miHoYo's official API and installing it in an isolated Wine prefix.
+
+**Availability:** The public repository does not include the runtime, and there is currently no Release. A fresh clone cannot run as-is. For contributors, [`scripts/build-wine.sh`](scripts/build-wine.sh) builds Wine and collects patched DLLs and `win32u.so`, but does **not** package a complete runtime (including `bin/` and the full `lib/`). A complete compatible runtime must be assembled separately before installation; see [building from source](#从源码构建定制-wine).
+
+Once a complete runtime is available, the intended installation and launch commands are:
 
 ```bash
 # 1. Install to ~/.local/share/yun-genshin-linux
@@ -29,15 +38,15 @@
 ~/.local/bin/yun-genshin
 ```
 
-Requires: Linux (X11) with a Vulkan-capable GPU driver (NVIDIA / AMD / Intel).
+Requires Linux (X11) and a compatible Vulkan driver; hardware decoding additionally requires the relevant Vulkan Video H.265 capabilities. NVIDIA, AMD or Intel branding alone does not guarantee support.
 Full documentation, Wine patch details, build instructions and FAQ: see the [简体中文 section](#这是什么) below.
 
 ---
 
 ## 这是什么
 
-云原神的官方客户端只有 Windows 版。本项目提供一套定制 Wine 运行时 + 补丁，
-让 Linux 用户可以直接玩，并获得 GPU 硬解、正确的画面和正常的鼠标手感。
+云原神的官方客户端只有 Windows 版。本项目通过定制 Wine 和补丁运行 Windows 客户端，
+尝试改善 GPU 解码、画面和鼠标手感；实际效果取决于运行环境和客户端版本。公开仓库不含完整运行时，目前也没有 Release，克隆后不能直接运行。
 
 **本项目不分发米哈游的客户端本体** —— 应用会引导你从官方渠道下载安装。
 
@@ -47,15 +56,19 @@ Full documentation, Wine patch details, build instructions and FAQ: see the [简
 
 | | 说明 |
 |---|---|
-| **GPU 硬件解码** | Vulkan `VK_KHR_video_decode_h265`（NVIDIA/AMD/Intel 通用），零 CPU 回读、零 CPU 上传 |
-| **纯 GPU 上屏** | 解码 → 纹理 → Vulkan swapchain，全程不回读内存 |
-| **自动适配客户端更新** | 客户端自行更新后自动重新部署补丁并做健康校验 |
+| **GPU 硬件解码** | 目标是 Vulkan `VK_KHR_video_decode_h265`；需显卡及驱动支持对应视频能力，NVIDIA/AMD/Intel 型号并非均可用 |
+| **GPU 上屏路径** | 支持路径生效时，目标是解码 → 纹理 → Vulkan swapchain，避免 CPU 回读和上传 |
+| **客户端更新处理** | 更新后重新部署补丁并做健康校验，不保证兼容后续所有客户端版本 |
 | **线性鼠标手感** | 修正 X11 指针加速造成的「灵敏度忽快忽慢」 |
-| **开箱即用** | 自带定制 Wine 运行时（约 350 MB），无需用户自行编译 Wine |
+| **运行时** | 公开仓库不包含完整定制 Wine，需另行准备 |
 
 ---
 
 ## 快速开始
+
+**前提**：目前没有可下载的 Release，仓库也不含完整运行时，不能仅凭克隆仓库执行以下命令。贡献者可先参考[从源码构建定制 Wine](#从源码构建定制-wine)：脚本仅收集补丁 DLL 和 `win32u.so`，不会打包包含 `bin/` 和完整 `lib/` 的运行时；完整兼容运行时需另行组装。还需要 Linux（X11）及兼容 Vulkan 驱动，硬解需设备支持相应 Vulkan Video H.265 能力。
+
+准备好完整运行时后，预期的安装与启动命令如下：
 
 ```bash
 # 1. 安装到 ~/.local/share/yun-genshin-linux
@@ -67,7 +80,7 @@ Full documentation, Wine patch details, build instructions and FAQ: see the [简
 
 首次运行会：
 
-1. 检查系统依赖（Vulkan 驱动、图形库等）
+1. 检查应用所需的 Python、GTK4 等依赖（Vulkan 视频解码能力需另行确认）
 2. 引导你从米哈游官方 API 下载 Windows 客户端安装包（`yscloud_*.exe`）
 3. 在隔离的 Wine prefix 中安装客户端
 4. 部署补丁 DLL
@@ -88,7 +101,7 @@ yun-genshin-linux/
 ├── patches/wine/
 │   ├── 0000-winevulkan-allow-h265.patch
 │   └── 0001-yg-hevc-vulkan-harddecode.patch
-├── runtime/                   # 预编译的定制 Wine（发行物）
+├── runtime/                   # 完整运行时的预期位置（公开仓库不含）
 │   ├── lib/wine/x86_64-windows/{wined3d,d3d11,dxva2,d3d9,win32u,winevulkan}.dll
 │   ├── lib/wine/x86_64-unix/win32u.so
 │   └── bin/wine ...
@@ -145,6 +158,8 @@ yun-genshin-linux/
 
 ## 从源码构建定制 Wine
 
+以下是贡献者构建补丁产物的路径，需要网络、Wine 构建依赖和编译工具。脚本不会生成可直接安装使用的完整运行时：它只收集下列 DLL 和 `win32u.so`，完整的 `bin/` 与 `lib/` 需要另行打包；具体打包可参考 `docs/packaging.md`。
+
 ```bash
 ./scripts/build-wine.sh
 ```
@@ -194,7 +209,7 @@ X11 指针加速是非线性的。运行 `scripts/fix-pointer-accel.sh` 改为�
 本项目**自己的代码**（`src/`、`scripts/`、文档）采用 MIT 许可证，
 见 [LICENSE](LICENSE)。
 
-`patches/` 下的 Wine 补丁和 `runtime/` 里的预编译二进制是 Wine 衍生物，
-遵循 **Wine 的 LGPL-2.1**（见 `runtime/LICENSE.wine`）。
+`patches/` 下的 Wine 补丁及另行打包的 Wine 二进制是 Wine 衍生物，
+遵循 **Wine 的 LGPL-2.1**。Tux、Ubuntu 和云原神相关名称、形象及素材的权利另属于其各自权利人，不随本项目代码的 MIT 许可证授予。
 
 **注意**：本项目与米哈游无任何关联，不包含、不分发云原神客户端。
